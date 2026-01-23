@@ -12,4 +12,4 @@ C++ implementation of **Gale-Shapley algorithm** for hospital-resident matching 
 ## Quick Start
 ```bash
 g++ -std=c++17 stable_matching.cpp -o matching
-./matching < sample.in
+./matching < sample.txt
