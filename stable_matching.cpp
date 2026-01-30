@@ -4,6 +4,7 @@
 #include <sstream>
 #include <regex>
 #include <queue>
+#include <fstream>
 
 using namespace std;
 
@@ -41,11 +42,13 @@ int main(){
     vector<string> B_names;
     vector<int> B_quota;
     vector<vector<string>> A_prefs;  
-    vector<vector<string>> B_prefs;  
+    vector<vector<string>> B_prefs; 
+    
+    ifstream inputFile("input.txt"); // Open the file named "input.txt"
     
     string line, section = "";
     bool all_done = false;
-    while(getline(cin, line)){
+    while(getline(inputFile, line)){
         trim(line);
         if (line == "@PartitionA") { section = "A"; continue; }
         if (line == "@PartitionB") { section = "B"; continue; }
@@ -196,4 +199,3 @@ cout << "-----Output-----"<<'\n';
 
     return 0;
 }
-
