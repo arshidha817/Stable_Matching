@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <regex>
+#include <queue>
 
 using namespace std;
 
@@ -17,11 +18,22 @@ void trim(string& s) {
 pair<string, int> parseBEntry(string entry){
     trim(entry);
     regex pattern(R"((\w+)\s*\((\d+)\))");
+    regex pattern1(R"((\w+)\s*)");
     smatch matches;
     if(regex_search(entry, matches, pattern)){
         return {matches[1], stoi(matches[2])};
     }
-    return {"", 0};
+    else if(regex_search(entry, matches, pattern1)){
+        return {matches[1], 1};
+    }
+    return {"", 0};     
+}
+
+int getRank(const vector<string>& b_prefs, const string& a) {
+for (int i = 0; i < b_prefs.size(); ++i) {
+if (b_prefs[i] == a) return i;
+}
+return -1; // b does not prefer a, hence b rejects a
 }
 
 int main(){
@@ -117,36 +129,71 @@ int main(){
         }
     }
 
-    vector<int> A_matched(A_list.size(), -1);  // -1 = unmatched
-    vector<int> B_matched(B_names.size(), 0);
-    vector<int> pref_rank(A_list.size());
+    int nA = A_list.size();
+    int nB = B_names.size();
+    vector<int> partnerA(nA, -1);   //index of M(a); if unassigned partnerA[i] = -1
+    vector<vector<int>> partnerB(nB);    //partnerB[j] = list of a's assigned to B[j]
+    vector<int> nextPrefA(nA, 0);   //tracks the number of partners that a has proposed to
 
-    for(int i=0; i<A_prefs.size(); i++){
-        for(int k=0; k<A_prefs[i].size(); k++){
-            int m=-1;
-            for(int j=0; j<B_names.size(); j++){
-                if(A_prefs[i][k] == B_names[j]){
-                    m = j;
+    queue<int> freeA;   //queue of a's who are unmatched. Initially this queue contains all a's
+
+    for (int i = 0; i < nA; ++i) freeA.push(i);
+
+    while (!freeA.empty()) {
+        int a = freeA.front(); freeA.pop();
+        if (nextPrefA[a] >= A_prefs[a].size()) continue;  // no more preferences left for a to propose to
+
+        string a_name = A_list[a];
+        string b_name = A_prefs[a][nextPrefA[a]];
+        int b = -1;
+        for (int j = 0; j < nB; j++) {
+            if (B_names[j] == b_name) { b = j; break; }
+        }
+        if (b == -1) { ++nextPrefA[a]; continue; }  // if the preferred b != B_names[j], continue and find the j which satidifies b = B_names[j]
+
+        int rank_a = getRank(B_prefs[b], a_name);   //finding the rank of a in b's pref list
+        if(rank_a != -1){                           //runs iff b has a in its pref list
+            if ((int)partnerB[b].size() < B_quota[b]) { //checks if the no. of partners matched for b <= b's quota
+                partnerB[b].push_back(a);
+                partnerA[a] = b;
+            } 
+        
+            else {//codeblock that executes the rejection and replacement of current matches with better matches (after the quota is filled)
+                // Find worst current match
+                int worst_a = -1, worst_rank = -1;
+                for (int curr_a : partnerB[b]) {    
+                    string curr_name = A_list[curr_a];
+                    int curr_rank = getRank(B_prefs[b], curr_name);
+                    if (curr_rank > worst_rank) {
+                        worst_rank = curr_rank;
+                        worst_a = curr_a;
+                    }
+                }
+                if (rank_a < worst_rank) {  // Prefer a (lower rank better)
+                    // Reject worst_a
+                    partnerA[worst_a] = -1;
+                    partnerB[b].erase(find(partnerB[b].begin(), partnerB[b].end(), worst_a));
+                    freeA.push(worst_a);
+                    // Accept a
+                    partnerB[b].push_back(a);
+                    partnerA[a] = b;
+                } else {
+                    // Reject a
+                    ++nextPrefA[a];
+                    freeA.push(a);
                 }
             }
-            if(m==-1){
-                continue;
-            }
-            if(B_matched[m]<B_quota[m]){
-                A_matched[i] = m;
-                B_matched[m]++;
-                pref_rank[i] = k+1;
-                break;
-            }
         }
     }
-    for(int i=0; i<A_list.size(); i++){
-        if(A_matched[i]!=-1){
-            cout<<A_list[i]<<", "<<B_names[A_matched[i]]<<", "<<pref_rank[i]<<endl;
+
+    // Output matching
+cout << "-----Output-----"<<'\n';
+    for (int i = 0; i < nA; ++i) {
+        if (partnerA[i] != -1) {
+            cout << A_list[i] << ", " << B_names[partnerA[i]] << ", " << partnerA[i] + 1 << '\n';
         }
-        else
-            continue;
     }
-    
+
     return 0;
 }
+
