@@ -44,11 +44,9 @@ int main(){
     vector<vector<string>> A_prefs;  
     vector<vector<string>> B_prefs; 
     
-    ifstream inputFile("input.txt"); // Open the file named "input.txt"
-    
     string line, section = "";
     bool all_done = false;
-    while(getline(inputFile, line)){
+    while(getline(cin, line)){ 
         trim(line);
         if (line == "@PartitionA") { section = "A"; continue; }
         if (line == "@PartitionB") { section = "B"; continue; }
