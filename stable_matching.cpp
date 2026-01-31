@@ -37,16 +37,17 @@ if (b_prefs[i] == a) return i;
 return -1; // b does not prefer a, hence b rejects a
 }
 
-int main(){
+int main(int argc, char* argv[]) {
     vector<string> A_list;
     vector<string> B_names;
     vector<int> B_quota;
     vector<vector<string>> A_prefs;  
     vector<vector<string>> B_prefs; 
     
+    ifstream file(argv[1]);
     string line, section = "";
     bool all_done = false;
-    while(getline(cin, line)){ 
+    while(getline(file, line)){ 
         trim(line);
         if (line == "@PartitionA") { section = "A"; continue; }
         if (line == "@PartitionB") { section = "B"; continue; }
@@ -129,6 +130,8 @@ int main(){
             }
         }
     }
+
+    if(EOF) file.close();
 
     int nA = A_list.size();
     int nB = B_names.size();
