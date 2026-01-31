@@ -162,7 +162,7 @@ int main(int argc, char* argv[]) {
                 partnerA[a] = b;
             } 
         
-            else {//codeblock that executes the rejection and replacement of current matches with better matches (after the quota is filled)
+            else {//codeblock that executes the rejection and replacement strategy
                 // Find worst current match
                 int worst_a = -1, worst_rank = -1;
                 for (int curr_a : partnerB[b]) {    
