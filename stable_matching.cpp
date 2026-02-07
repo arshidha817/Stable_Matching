@@ -191,7 +191,6 @@ int main(int argc, char* argv[]) {
     }
 
     // Output matching
-cout << "-----Output-----"<<'\n';
     for (int i = 0; i < nA; ++i) {
         if (partnerA[i] != -1) {
             cout << A_list[i] << ", " << B_names[partnerA[i]] << ", " << partnerA[i] + 1 << '\n';
