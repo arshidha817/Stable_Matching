@@ -153,7 +153,7 @@ int main(int argc, char* argv[]) {
         for (int j = 0; j < nB; j++) {
             if (B_names[j] == b_name) { b = j; break; }
         }
-        if (b == -1) { ++nextPrefA[a]; continue; }  // if the preferred b != B_names[j], continue and find the j which satidifies b = B_names[j]
+        if (b == -1) { ++nextPrefA[a]; continue; }  // if the preferred b != B_names[j], continue and find the j which satisfies b = B_names[j]
 
         int rank_a = getRank(B_prefs[b], a_name);   //finding the rank of a in b's pref list
         if(rank_a != -1){                           //runs iff b has a in its pref list
@@ -193,7 +193,7 @@ int main(int argc, char* argv[]) {
     // Output matching
     for (int i = 0; i < nA; ++i) {
         if (partnerA[i] != -1) {
-            cout << A_list[i] << ", " << B_names[partnerA[i]] << ", " << partnerA[i] + 1 << '\n';
+            cout << A_list[i] << ", " << B_names[partnerA[i]] << ", " << nextPrefA[i] + 1 << '\n';
         }
     }
 
