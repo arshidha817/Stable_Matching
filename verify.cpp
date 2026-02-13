@@ -95,7 +95,7 @@ int main(int argc, char* argv[]) {
             string u, v, num;
             
             if (getline(ss, u, ',')) {
-                if (getline(ss, v, ',')) { 
+                while (getline(ss, v, ',')) { 
                     trim(u); trim(v);
                     if (!v.empty() && v.back() == ';') v.pop_back();                
                     if (!u.empty() && !v.empty()) {
@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
         }
     }
     file.close();
-
+    
     for(const auto& pair : listA) { if(matchA.find(pair.first) == matchA.end()) matchA[pair.first] = {}; }
     for(const auto& pair : listB) { if(matchB.find(pair.first) == matchB.end()) matchB[pair.first] = {}; }
 
@@ -159,7 +159,7 @@ int main(int argc, char* argv[]) {
 
             if (!a_wants_b) continue; // A doesn't want to change
 
-            // -- Check: Does B_cand prefer A? --
+            //does b_cand prefer a?
             
             if (listB.find(b_cand) == listB.end()) continue; // Safety check
             
@@ -200,5 +200,3 @@ int main(int argc, char* argv[]) {
 
     return 0;
 }
-    
-
